@@ -5,5 +5,4 @@ WORKDIR /backend
 COPY ./package.json ./
 COPY ./package-lock.json ./
 RUN npm install
-RUN ["chmod", "+x", "/usr/src/app/docker-entrypoint.sh"]
 COPY ./ ./
