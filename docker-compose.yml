@@ -40,7 +40,7 @@ services:
         networks:
           - my-network
         command: >
-            sh -c "/scripts/wait-for-it.sh mysql:3306 -- npm run start"
+            npm run start"
 networks:
   my-network:
     driver: bridge
