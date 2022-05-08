@@ -34,7 +34,7 @@ export class User {
   @Column({ default: UserRole.CUSTOMER })
   role: UserRole;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   business_id?: string;
 
   @ManyToOne((type) => Business, (business) => business.users)
