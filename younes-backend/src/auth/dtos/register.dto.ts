@@ -24,7 +24,7 @@ export class registerDTO {
   @ApiProperty({ type: String })
   name: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @ApiProperty({ type: String })
   business_id: string;
 
