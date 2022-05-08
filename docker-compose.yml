@@ -1,0 +1,49 @@
+version: '3.6'
+
+services:
+    mysql:
+        restart: always
+        image: mysql:8.0
+        container_name: younes_db
+        command: --default-authentication-plugin=mysql_native_password
+        ports:
+          - '3306:3306'
+        expose:
+          - 3306
+        environment:
+          - MYSQL_DATABASE=younes_db
+          - MYSQL_ROOT_USER=root
+          - MYSQL_ROOT_PASSWORD=root
+          - MYSQL_ROOT_HOST=%
+          - MYSQL_USER=younes
+          - MYSQL_PASSWORD=P@ssw0rd
+        volumes:
+          - db:/var/lib/mysql
+        networks:
+          - my-network
+    backend:
+        restart: always
+        image: younes/backend
+        ports:
+          - 3000:3000
+        build:
+            context: ./younes-backend
+            dockerfile: ./Dockerfile
+        volumes:
+            - ./younes-backend:/backend
+            - ./scripts:/scripts
+            - '/backend/node_modules'
+        links:
+            - mysql
+        depends_on:
+          - mysql
+        networks:
+          - my-network
+        command: >
+            sh -c "/scripts/wait-for-it.sh mysql:3306 -- npm run start"
+networks:
+  my-network:
+    driver: bridge
+volumes:
+  db:
+    driver: local
