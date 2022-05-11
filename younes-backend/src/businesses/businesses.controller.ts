@@ -1,21 +1,18 @@
-import { ForbiddenException } from '@nestjs/common';
-import { UseGuards } from '@nestjs/common';
 import {
   Body,
   Controller,
-  Delete,
-  Get,
+  Delete, ForbiddenException, Get,
   Param,
   Patch,
   Post,
-  UploadedFile,
-  UseInterceptors,
+  UploadedFile, UseGuards, UseInterceptors
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { diskStorage, FileFilterCallback } from 'multer';
-import { extname } from 'path';
+import { basename, extname } from 'path';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { SuperAdminGuard } from 'src/auth/guards/super-admin.guard';
 import { BUSINESS_LOGO_PATH } from 'src/common/constants';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { User } from 'src/users/user.entity';
@@ -29,7 +26,7 @@ export class BusinessesController {
   constructor(private readonly businessesService: BusinessesService) {}
 
   @Post()
-  @UseGuards(new AuthGuard())
+  @UseGuards(new SuperAdminGuard())
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(
     FileInterceptor('logo', {
@@ -41,7 +38,7 @@ export class BusinessesController {
             .fill(null)
             .map(() => Math.round(Math.random() * 16).toString(16))
             .join('');
-          cb(null, `${randomName}${extname(file.originalname)}`);
+          cb(null, `${basename(file.originalname)}-${randomName}${extname(file.originalname)}`);
         },
       }),
       fileFilter: (req, file, cb: FileFilterCallback) => {

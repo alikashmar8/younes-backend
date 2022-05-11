@@ -1,6 +1,0 @@
-
-{
-    "dependencies": {
-        "@nestjs/common": "^8.0.0"
-    }   
-}

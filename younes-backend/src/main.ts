@@ -5,12 +5,20 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import express from 'express';
+import * as morgan from 'morgan';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
-
+  app.setGlobalPrefix('api');
+  app.enableCors();
+  app.use(
+    morgan('common', {
+      skip: function (req, res) {
+        return req.method == 'OPTIONS';
+      },
+    }),
+  );
   const config = new DocumentBuilder()
     .setTitle('Backend API')
     .setDescription('Documentation for your backend API')
@@ -21,7 +29,7 @@ async function bootstrap() {
     )
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
+  SwaggerModule.setup('docs', app, document);
 
   app.useStaticAssets(join(__dirname, '..', 'uploads'), {
     prefix: '/uploads',
