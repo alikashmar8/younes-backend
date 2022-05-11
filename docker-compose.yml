@@ -7,7 +7,7 @@ services:
         container_name: younes_db
         command: --default-authentication-plugin=mysql_native_password
         ports:
-          - '3307:3307'
+          - '3307:3306'
         expose:
           - 3307
         environment:
