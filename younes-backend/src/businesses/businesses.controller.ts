@@ -26,7 +26,7 @@ export class BusinessesController {
   constructor(private readonly businessesService: BusinessesService) {}
 
   @Post()
-  @UseGuards(new SuperAdminGuard())
+  // @UseGuards(new SuperAdminGuard())
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(
     FileInterceptor('logo', {
