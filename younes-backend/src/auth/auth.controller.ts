@@ -1,9 +1,10 @@
 import {
   Body,
   Controller,
+  Header,
   Post,
   UsePipes,
-  ValidationPipe
+  ValidationPipe,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
@@ -17,6 +18,9 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('login')
+  @Header('Access-Control-Allow-Origin', '*')
+  @Header('Content-Type', 'application/json;charset=UTF-8')
+  @Header('Charset', 'utf-8')
   @UsePipes(new ValidationPipe())
   async emailLogin(@Body() user: UserEmailLoginDto): Promise<string> {
     return await this.authService.loginByEmail(user);

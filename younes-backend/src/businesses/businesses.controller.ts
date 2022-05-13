@@ -8,7 +8,7 @@ import {
   UploadedFile, UseGuards, UseInterceptors
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { diskStorage, FileFilterCallback } from 'multer';
 import { basename, extname } from 'path';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
@@ -21,12 +21,13 @@ import { CreateBusinessDto } from './dto/create-business.dto';
 import { UpdateBusinessDto } from './dto/update-business.dto';
 
 @ApiTags('businesses')
+@ApiBearerAuth('access_token')
 @Controller('businesses')
 export class BusinessesController {
   constructor(private readonly businessesService: BusinessesService) {}
 
   @Post()
-  // @UseGuards(new SuperAdminGuard())
+  @UseGuards(new SuperAdminGuard())
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(
     FileInterceptor('logo', {

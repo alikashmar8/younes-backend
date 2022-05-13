@@ -17,13 +17,15 @@ export class SuperAdminGuard implements CanActivate {
     
     if (!authorization) return false;
     const token = authorization.split(' ')[1];
+    console.log('token: ' + token);
     if (!token) {
       return false;
     }
     try {
       const verified: any = jwt.verify(token, JWT_SECRET);
-
-      if (verified.user && verified.role === UserRole.SUPER_USER) {
+      console.log('verified: ');
+      console.log(verified);
+      if (verified.user && verified.role == UserRole.SUPER_USER) {
         request.user = verified.user;
         return true;
       } else {
