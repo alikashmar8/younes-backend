@@ -25,7 +25,7 @@ export class SuperAdminGuard implements CanActivate {
       const verified: any = jwt.verify(token, JWT_SECRET);
       console.log('verified: ');
       console.log(verified);
-      if (verified.user && verified.role == UserRole.SUPER_USER) {
+      if (verified && verified.role == UserRole.SUPER_USER) {
         request.user = verified.user;
         return true;
       } else {
