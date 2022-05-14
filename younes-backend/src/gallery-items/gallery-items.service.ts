@@ -53,14 +53,17 @@ export class GalleryItemsService {
   }
 
   async findAll(currentUser: User, parent_id?: string): Promise<GalleryItem[]> {
-    return await this.galleryItemRepository
+    let query: any = this.galleryItemRepository
       .createQueryBuilder('gallery_item')
       .where('gallery_item.business_id = :business_id', {
         business_id: currentUser.business_id,
-      })
-      .andWhere('gallery_item.parent_id = :parent_id', { parent_id: parent_id })
-      .orderBy('gallery_item.type', 'DESC')
-      .getMany();
+      });
+    if (parent_id) {
+      query = query.andWhere('gallery_item.parent_id = :parent_id', {
+        parent_id: parent_id,
+      });
+    }
+    return await query.orderBy('gallery_item.type', 'DESC').getMany();
   }
 
   async findOne(
