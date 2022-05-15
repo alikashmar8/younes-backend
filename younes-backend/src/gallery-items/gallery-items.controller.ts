@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -87,7 +88,7 @@ export class GalleryItemsController {
     if (file) {
       createGalleryItemDto.image = GALLERY_FILES_IMAGES_PATH + file.filename;
     } else {
-      createGalleryItemDto.image = null;
+      throw new BadRequestException('No image was uploaded');
     }
     return await this.galleryItemsService.createFile(
       createGalleryItemDto,
