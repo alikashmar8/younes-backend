@@ -9,18 +9,33 @@ import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
+    TypeOrmModule.forRoot(
+    // docker settings
+      //   {
+    //   type: 'mysql',
+    //   host: 'younes_db',
+    //   port: 3306,
+    //   username: 'younes',
+    //   password: 'P@ssw0rd',
+    //   database: 'younes_db',
+    //   synchronize: true,
+    //   logging: false,
+    //   entities: ['dist/**/*.entity{.ts,.js}'],
+    //   migrations: ['src/migrations/**/*.ts'],
+    // }
+      {
       type: 'mysql',
-      host: 'younes_db',
-      port: 3307,
-      username: 'younes',
-      password: 'P@ssw0rd',
+      host: 'localhost',
+      port: 3306,
+      username: 'admin',
+      password: 'admin',
       database: 'younes_db',
       synchronize: true,
       logging: false,
       entities: ['dist/**/*.entity{.ts,.js}'],
       migrations: ['src/migrations/**/*.ts'],
-    }),
+    }
+    ),
     BusinessesModule,
     UsersModule,
     AuthModule,
