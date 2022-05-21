@@ -1,7 +1,6 @@
 import { GalleryItem } from './../gallery-items/entities/gallery-item.entity';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { Business } from 'src/businesses/entities/business.entity';
-// import { Order } from 'src/orders/orders.entity';
 import {
   BeforeInsert,
   Column,

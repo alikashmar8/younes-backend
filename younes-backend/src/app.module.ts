@@ -25,7 +25,7 @@ import { UsersModule } from './users/users.module';
     // }
       {
       type: 'mysql',
-      host: 'localhost',
+      host: '52.213.53.168',
       port: 3306,
       username: 'admin',
       password: 'admin',

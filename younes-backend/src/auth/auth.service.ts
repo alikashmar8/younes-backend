@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
 import { JWT_SECRET } from 'src/common/constants';
 import { UserRole } from 'src/common/enums/user-role.enum';
@@ -44,6 +44,8 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
     }
+    // const match = await argon.verify(user.password, password);    
+
     const match = await bcrypt.compare(password, user.password);
     if (match) {
       const token = jwt.sign({ user }, JWT_SECRET, {
