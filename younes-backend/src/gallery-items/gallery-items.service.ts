@@ -62,6 +62,8 @@ export class GalleryItemsService {
       query = query.andWhere('gallery_item.parent_id = :parent_id', {
         parent_id: parent_id,
       });
+    }else{
+      query = query.andWhere('gallery_item.parent_id IS NULL');
     }
     return await query.orderBy('gallery_item.type', 'DESC').getMany();
   }

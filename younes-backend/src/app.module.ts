@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { BusinessesModule } from './businesses/businesses.module';
 import { GalleryItemsModule } from './gallery-items/gallery-items.module';
 import { UsersModule } from './users/users.module';
+import { FavoriteModule } from './favorite/favorite.module';
 
 @Module({
   imports: [
@@ -23,13 +24,25 @@ import { UsersModule } from './users/users.module';
     //   entities: ['dist/**/*.entity{.ts,.js}'],
     //   migrations: ['src/migrations/**/*.ts'],
     // }
+    //   {
+    //   type: 'mysql',
+    //   host: '52.213.53.168',
+    //   port: 3306,
+    //   username: 'admin',
+    //   password: 'admin',
+    //   database: 'younes_db',
+    //   synchronize: true,
+    //   logging: false,
+    //   entities: ['dist/**/*.entity{.ts,.js}'],
+    //   migrations: ['src/migrations/**/*.ts'],
+    // }
       {
       type: 'mysql',
-      host: '52.213.53.168',
+      host: 'localhost',
       port: 3306,
-      username: 'admin',
-      password: 'admin',
-      database: 'younes_db',
+      username: 'root',
+      password: '',
+      database: 'youness_db',
       synchronize: true,
       logging: false,
       entities: ['dist/**/*.entity{.ts,.js}'],
@@ -40,6 +53,7 @@ import { UsersModule } from './users/users.module';
     UsersModule,
     AuthModule,
     GalleryItemsModule,
+    FavoriteModule,
   ],
   controllers: [AppController],
   providers: [AppService],

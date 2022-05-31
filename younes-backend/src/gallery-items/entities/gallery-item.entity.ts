@@ -11,6 +11,7 @@ import { CreateDateColumn } from 'typeorm';
 import { ManyToOne } from 'typeorm';
 import { JoinColumn } from 'typeorm';
 import { Business } from 'src/businesses/entities/business.entity';
+import { Favorite } from 'src/favorite/entities/favorite.entity';
 
 @Entity('gallery-items')
 export class GalleryItem {
@@ -99,6 +100,9 @@ export class GalleryItem {
     name: 'business_id',
   })
   business: Business;
+
+  @OneToMany((type) => Favorite, (favorite) => favorite.item)
+  favorites: Favorite[];
 
   @CreateDateColumn()
   created_at: string;

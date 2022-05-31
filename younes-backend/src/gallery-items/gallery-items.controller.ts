@@ -54,6 +54,7 @@ export class GalleryItemsController {
       storage: diskStorage({
         destination: GALLERY_FILES_IMAGES_PATH,
         filename: (req, file, cb) => {
+          console.log('using image file name');
           const randomName = Array(32)
             .fill(null)
             .map(() => Math.round(Math.random() * 16).toString(16))
@@ -61,19 +62,6 @@ export class GalleryItemsController {
           cb(null, `${randomName}${extname(file.originalname)}`);
         },
       }),
-      fileFilter: (req, file, cb: FileFilterCallback) => {
-        const acceptedExtensions = [
-          'image/jpg',
-          'image/jpeg',
-          'image/png',
-          'image/svg',
-        ];
-        if (!acceptedExtensions.includes(file.mimetype)) {
-          const error = new Error('Invalid file type');
-          return cb(null, false);
-        }
-        cb(null, true);
-      },
       limits: {
         fileSize: 1024 * 1024 * 5,
       },
@@ -85,9 +73,13 @@ export class GalleryItemsController {
     @CurrentUser() user: User,
     @UploadedFile() file: Express.Multer.File,
   ) {
+    console.log('checking if file exists in controller');
+    
     if (file) {
+      console.log('file found in if');
       createGalleryItemDto.image = GALLERY_FILES_IMAGES_PATH + file.filename;
     } else {
+      console.log('file not received in controller');
       throw new BadRequestException('No image was uploaded');
     }
     return await this.galleryItemsService.createFile(

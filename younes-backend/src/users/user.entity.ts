@@ -12,6 +12,7 @@ import {
 } from 'typeorm';
 import { BCRYPT_SALT } from '../common/constants';
 import { UserRole } from '../common/enums/user-role.enum';
+import { Favorite } from 'src/favorite/entities/favorite.entity';
 
 @Entity('users')
 export class User {
@@ -45,6 +46,9 @@ export class User {
 
   @OneToMany((type) => GalleryItem, (item) => item.updated_by)
   updatedItems: GalleryItem[];
+
+  @OneToMany((type) => Favorite, (fav) => fav.user)
+  favoriteItems: Favorite[];
 
   @BeforeInsert()
   async hashPassword() {
