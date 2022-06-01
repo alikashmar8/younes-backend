@@ -16,7 +16,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
-import { diskStorage, FileFilterCallback } from 'multer';
+import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { GALLERY_FILES_IMAGES_PATH } from 'src/common/constants';
@@ -74,7 +74,7 @@ export class GalleryItemsController {
     @UploadedFile() file: Express.Multer.File,
   ) {
     console.log('checking if file exists in controller');
-    
+
     if (file) {
       console.log('file found in if');
       createGalleryItemDto.image = GALLERY_FILES_IMAGES_PATH + file.filename;
@@ -102,8 +102,8 @@ export class GalleryItemsController {
     return await this.galleryItemsService.findOne(id, user, [
       'parent',
       'children',
-      'createdBy',
-      'updatedBy',
+      'created_by',
+      'updated_by',
     ]);
   }
 

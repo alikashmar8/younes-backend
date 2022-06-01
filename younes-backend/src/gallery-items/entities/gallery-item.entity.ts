@@ -77,7 +77,9 @@ export class GalleryItem {
   @OneToMany((type) => GalleryItem, (galleryItem) => galleryItem.parent)
   children: GalleryItem[];
 
-  @ManyToOne((type) => GalleryItem, (galleryItem) => galleryItem.children)
+  @ManyToOne((type) => GalleryItem, (galleryItem) => galleryItem.children, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({
     name: 'parent_id',
   })
