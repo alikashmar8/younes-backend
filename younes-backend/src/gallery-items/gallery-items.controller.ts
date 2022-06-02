@@ -133,4 +133,16 @@ export class GalleryItemsController {
   remove(@Param('id') id: string, @CurrentUser() user: User) {
     return this.galleryItemsService.remove(id, user);
   }
+
+  @Post(':id/sell')
+  async sell(
+    @Param('id') id: string,
+    @Body() body: any,
+    @CurrentUser() user: User,
+  ) {
+    if (!body.quantity) {
+      throw new BadRequestException('quantity is required');
+    }
+    return await this.galleryItemsService.sell(id, body.quantity, user);
+  }
 }

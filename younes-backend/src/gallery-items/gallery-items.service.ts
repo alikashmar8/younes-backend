@@ -1,4 +1,3 @@
-import { UpdateGalleryFolderDto } from './dto/update-gallery-folder.dto';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GalleryItemType } from 'src/common/dtos/gallery-item-type.dto';
@@ -6,8 +5,9 @@ import { User } from 'src/users/user.entity';
 import { Repository } from 'typeorm';
 import { CreateGalleryFileDto } from './dto/create-gallery-file.dto';
 import { CreateGalleryFolderDto } from './dto/create-gallery-folder.dto';
-import { GalleryItem } from './entities/gallery-item.entity';
 import { UpdateGalleryFileDto } from './dto/update-gallery-file.dto';
+import { UpdateGalleryFolderDto } from './dto/update-gallery-folder.dto';
+import { GalleryItem } from './entities/gallery-item.entity';
 
 @Injectable()
 export class GalleryItemsService {
@@ -62,7 +62,7 @@ export class GalleryItemsService {
       query = query.andWhere('gallery_item.parent_id = :parent_id', {
         parent_id: parent_id,
       });
-    }else{
+    } else {
       query = query.andWhere('gallery_item.parent_id IS NULL');
     }
     return await query.orderBy('gallery_item.type', 'DESC').getMany();
@@ -113,5 +113,16 @@ export class GalleryItemsService {
       console.log(err);
       throw new BadRequestException('Error deleting item');
     });
+  }
+
+  async sell(id: string, quantity: any, user: User) {
+    quantity = Number(quantity);
+    const galleryItem = await this.findOne(id, user);
+    if (galleryItem.quantity < quantity) {
+      throw new BadRequestException('Not enough quantity');
+    }
+    galleryItem.quantity -= quantity;
+    galleryItem.updated_by_id = user.id;
+    return await this.galleryItemRepository.save(galleryItem);
   }
 }
