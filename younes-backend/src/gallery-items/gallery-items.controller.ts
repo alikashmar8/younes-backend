@@ -4,9 +4,8 @@ import {
   Controller,
   Delete,
   Get,
-  Param,
-  Patch,
-  Post,
+  Param, Post,
+  Put,
   Query,
   UploadedFile,
   UseGuards,
@@ -97,6 +96,14 @@ export class GalleryItemsController {
     return await this.galleryItemsService.findAll(user, parent_id);
   }
 
+  @Get('favorites')
+  @UseGuards(new AuthGuard())
+  async findAllFavorites(
+    @CurrentUser() user: User,
+  ) {
+    return await this.galleryItemsService.findAllFavorites(user);
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string, @CurrentUser() user: User) {
     return await this.galleryItemsService.findOne(id, user, [
@@ -107,7 +114,17 @@ export class GalleryItemsController {
     ]);
   }
 
-  @Patch('folders/:id')
+  @Put(':id/make-favorite')
+  async makeItemFavorite(@Param('id') id: string, @CurrentUser() user: User) {
+    return await this.galleryItemsService.makeItemFavorite(id, user);
+  }
+
+  @Put(':id/unfavorite')
+  async unfavoriteItem(@Param('id') id: string, @CurrentUser() user: User) {
+    return await this.galleryItemsService.unFavoriteItem(id, user);
+  }
+
+  @Put('folders/:id')
   updateFolder(
     @Param('id') id: string,
     @Body() updateGalleryItemDto: UpdateGalleryFolderDto,
@@ -120,7 +137,7 @@ export class GalleryItemsController {
     );
   }
 
-  @Patch('files/:id')
+  @Put('files/:id')
   updateFile(
     @Param('id') id: string,
     @Body() updateGalleryItemDto: UpdateGalleryFileDto,

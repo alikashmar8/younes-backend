@@ -49,7 +49,9 @@ export class GalleryItem {
   @Column({})
   quantity?: number;
 
-  @Column({})
+  @Column({
+    type: 'double',
+  })
   price?: number;
 
   @Column({

@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GalleryItemType } from 'src/common/dtos/gallery-item-type.dto';
+import { Favorite } from 'src/favorite/entities/favorite.entity';
 import { User } from 'src/users/user.entity';
 import { Repository } from 'typeorm';
 import { CreateGalleryFileDto } from './dto/create-gallery-file.dto';
@@ -14,6 +15,8 @@ export class GalleryItemsService {
   constructor(
     @InjectRepository(GalleryItem)
     private readonly galleryItemRepository: Repository<GalleryItem>,
+    @InjectRepository(Favorite)
+    private readonly favoritesRepository: Repository<Favorite>,
   ) {}
 
   async createFolder(
@@ -52,9 +55,10 @@ export class GalleryItemsService {
       });
   }
 
-  async findAll(currentUser: User, parent_id?: string): Promise<GalleryItem[]> {
+  async findAll(currentUser: User, parent_id?: string) {
     let query: any = this.galleryItemRepository
       .createQueryBuilder('gallery_item')
+      .leftJoinAndSelect('gallery_item.favorites', 'favorites')
       .where('gallery_item.business_id = :business_id', {
         business_id: currentUser.business_id,
       });
@@ -65,7 +69,37 @@ export class GalleryItemsService {
     } else {
       query = query.andWhere('gallery_item.parent_id IS NULL');
     }
-    return await query.orderBy('gallery_item.type', 'DESC').getMany();
+    let res = await query.orderBy('gallery_item.type', 'DESC').getMany();
+    res.forEach((item) => {
+      item.is_favorite = item.favorites.find(
+        (fav) => fav.user_id === currentUser.id,
+      )
+        ? true
+        : false;
+    });
+    return res;
+  }
+
+  async findAllFavorites(currentUser: User) {
+    let res = await this.galleryItemRepository
+      .createQueryBuilder('gallery_item')
+      .innerJoinAndSelect('gallery_item.favorites', 'favorites')
+      .where('favorites.user_id = :user_id', {
+        user_id: currentUser.id,
+      })
+      .where('gallery_item.business_id = :business_id', {
+        business_id: currentUser.business_id,
+      })
+      .orderBy('gallery_item.type', 'DESC')
+      .getMany();
+    res.forEach((item: any) => {
+      item.is_favorite = item.favorites.find(
+        (fav) => fav.user_id === currentUser.id,
+      )
+        ? true
+        : false;
+    });
+    return res;
   }
 
   async findOne(
@@ -124,5 +158,28 @@ export class GalleryItemsService {
     galleryItem.quantity -= quantity;
     galleryItem.updated_by_id = user.id;
     return await this.galleryItemRepository.save(galleryItem);
+  }
+
+  async unFavoriteItem(id: string, currentUser: User) {
+    return await this.favoritesRepository.delete({
+      user_id: currentUser.id,
+      item_id: id,
+    });
+  }
+  async makeItemFavorite(id: string, currentUser: User) {
+    const item = await this.findOne(id, currentUser);
+    const isFavorite = await this.favoritesRepository.findOne({
+      where: {
+        user_id: currentUser.id,
+        item_id: id,
+      },
+    });
+    if (isFavorite) {
+      throw new BadRequestException('Item is already a favorite');
+    }
+    return await this.favoritesRepository.save({
+      user_id: currentUser.id,
+      item_id: id,
+    });
   }
 }
