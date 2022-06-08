@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
+    "@nestjs/config": "^2.1.0",
     "@nestjs/core": "^8.0.0",
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^8.0.0",
@@ -32,6 +33,7 @@
     "@nestjsx/crud-typeorm": "^5.0.0-alpha.3",
     "@vendia/serverless-express": "^4.8.0",
     "aws-lambda": "^1.0.7",
+    "aws-sdk": "^2.1149.0",
     "aws-serverless-express": "^3.4.0",
     "bcryptjs": "^2.4.3",
     "class-transformer": "^0.5.1",
@@ -39,6 +41,7 @@
     "jsonwebtoken": "^8.5.1",
     "morgan": "^1.10.0",
     "mysql": "^2.18.1",
+    "nest-aws-sdk": "^2.1.0",
     "pg": "^8.7.3",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",

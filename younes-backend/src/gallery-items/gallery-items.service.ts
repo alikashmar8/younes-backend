@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GalleryItemType } from 'src/common/dtos/gallery-item-type.dto';
 import { Favorite } from 'src/favorite/entities/favorite.entity';
+import { S3Service } from 'src/s3/s3.service';
 import { User } from 'src/users/user.entity';
 import { Repository } from 'typeorm';
 import { CreateGalleryFileDto } from './dto/create-gallery-file.dto';
@@ -17,6 +18,7 @@ export class GalleryItemsService {
     private readonly galleryItemRepository: Repository<GalleryItem>,
     @InjectRepository(Favorite)
     private readonly favoritesRepository: Repository<Favorite>,
+    private s3Service: S3Service,
   ) {}
 
   async createFolder(
@@ -41,7 +43,7 @@ export class GalleryItemsService {
     data: CreateGalleryFileDto,
     currentUser: User,
   ): Promise<GalleryItem> {
-    return await this.galleryItemRepository
+    let item = await this.galleryItemRepository
       .save({
         ...data,
         type: GalleryItemType.FILE,
@@ -53,6 +55,17 @@ export class GalleryItemsService {
         console.log(err);
         throw new BadRequestException('Error creating file');
       });
+
+    const fileLocation: string = await this.s3Service.s3FileUpload(
+      data.image,
+      `items/${item.id}`,
+    );
+
+    await this.galleryItemRepository.update(item.id, {
+      image: fileLocation,
+    });
+
+    return item;
   }
 
   async findAll(currentUser: User, parent_id?: string) {
@@ -102,23 +115,25 @@ export class GalleryItemsService {
     return res;
   }
 
-  async findOne(
-    id: string,
-    currentUser: User,
-    relation?: string[],
-  ): Promise<GalleryItem> {
-    return await this.galleryItemRepository
+  async findOne(id: string, currentUser: User, relation: string[] = []) {
+    let res: any = await this.galleryItemRepository
       .findOneOrFail({
         where: {
           id,
           business_id: currentUser.business_id,
         },
-        relations: relation,
+        relations: ['favorites', ...relation],
       })
       .catch((err) => {
         console.log(err);
         throw new BadRequestException('Error finding gallery item');
       });
+    res.is_favorite = res.favorites.find(
+      (fav) => fav.user_id === currentUser.id,
+    )
+      ? true
+      : false;
+    return res;
   }
 
   async updateFolder(
@@ -142,7 +157,9 @@ export class GalleryItemsService {
   }
 
   async remove(id: string, currentUser: User) {
-    await this.findOne(id, currentUser);
+    const item = await this.findOne(id, currentUser);
+    if (item.type === GalleryItemType.FILE)
+      await this.s3Service.s3FileDelete(item.image);
     return await this.galleryItemRepository.delete(id).catch((err) => {
       console.log(err);
       throw new BadRequestException('Error deleting item');

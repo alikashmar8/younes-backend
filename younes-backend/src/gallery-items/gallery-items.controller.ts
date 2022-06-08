@@ -48,23 +48,24 @@ export class GalleryItemsController {
 
   @Post('files')
   @UseInterceptors(
-    FileInterceptor('image', {
-      preservePath: true,
-      storage: diskStorage({
-        destination: GALLERY_FILES_IMAGES_PATH,
-        filename: (req, file, cb) => {
-          console.log('using image file name');
-          const randomName = Array(32)
-            .fill(null)
-            .map(() => Math.round(Math.random() * 16).toString(16))
-            .join('');
-          cb(null, `${randomName}${extname(file.originalname)}`);
-        },
-      }),
-      limits: {
-        fileSize: 1024 * 1024 * 5,
-      },
-    }),
+    FileInterceptor('image')
+    // FileInterceptor('image', {
+    //   preservePath: true,
+    //   storage: diskStorage({
+    //     destination: GALLERY_FILES_IMAGES_PATH,
+    //     filename: (req, file, cb) => {
+    //       console.log('using image file name');
+    //       const randomName = Array(32)
+    //         .fill(null)
+    //         .map(() => Math.round(Math.random() * 16).toString(16))
+    //         .join('');
+    //       cb(null, `${randomName}${extname(file.originalname)}`);
+    //     },
+    //   }),
+    //   limits: {
+    //     fileSize: 1024 * 1024 * 5,
+    //   },
+    // }),
   )
   @ApiConsumes('multipart/form-data')
   async createFiles(
@@ -76,7 +77,8 @@ export class GalleryItemsController {
 
     if (file) {
       console.log('file found in if');
-      createGalleryItemDto.image = GALLERY_FILES_IMAGES_PATH + file.filename;
+      // createGalleryItemDto.image = GALLERY_FILES_IMAGES_PATH + file.filename;
+      createGalleryItemDto.image = file;
     } else {
       console.log('file not received in controller');
       throw new BadRequestException('No image was uploaded');
