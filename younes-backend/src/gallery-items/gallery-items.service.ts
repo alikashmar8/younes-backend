@@ -42,6 +42,7 @@ export class GalleryItemsService {
   async createFile(
     data: CreateGalleryFileDto,
     currentUser: User,
+    file: Express.Multer.File
   ): Promise<GalleryItem> {
     let item = await this.galleryItemRepository
       .save({
@@ -57,8 +58,8 @@ export class GalleryItemsService {
       });
 
     const fileLocation: string = await this.s3Service.s3FileUpload(
-      data.image,
-      `items/${item.id}`,
+      file,
+      `${currentUser.business_id}/items`,
     );
 
     await this.galleryItemRepository.update(item.id, {

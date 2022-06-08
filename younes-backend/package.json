@@ -33,7 +33,7 @@
     "@nestjsx/crud-typeorm": "^5.0.0-alpha.3",
     "@vendia/serverless-express": "^4.8.0",
     "aws-lambda": "^1.0.7",
-    "aws-sdk": "^2.1149.0",
+    "aws-sdk": "^2.1150.0",
     "aws-serverless-express": "^3.4.0",
     "bcryptjs": "^2.4.3",
     "class-transformer": "^0.5.1",

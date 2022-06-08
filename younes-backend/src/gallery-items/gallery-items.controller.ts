@@ -4,21 +4,19 @@ import {
   Controller,
   Delete,
   Get,
-  Param, Post,
+  Param,
+  Post,
   Put,
   Query,
   UploadedFile,
   UseGuards,
   UseInterceptors,
   UsePipes,
-  ValidationPipe
+  ValidationPipe,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
-import { GALLERY_FILES_IMAGES_PATH } from 'src/common/constants';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { User } from 'src/users/user.entity';
 import { CreateGalleryFileDto } from './dto/create-gallery-file.dto';
@@ -48,7 +46,7 @@ export class GalleryItemsController {
 
   @Post('files')
   @UseInterceptors(
-    FileInterceptor('image')
+    FileInterceptor('image'),
     // FileInterceptor('image', {
     //   preservePath: true,
     //   storage: diskStorage({
@@ -75,17 +73,15 @@ export class GalleryItemsController {
   ) {
     console.log('checking if file exists in controller');
 
-    if (file) {
-      console.log('file found in if');
-      // createGalleryItemDto.image = GALLERY_FILES_IMAGES_PATH + file.filename;
-      createGalleryItemDto.image = file;
-    } else {
+    if (!file) {
       console.log('file not received in controller');
       throw new BadRequestException('No image was uploaded');
     }
+    console.log('file found in if');
     return await this.galleryItemsService.createFile(
       createGalleryItemDto,
       user,
+      file,
     );
   }
 
@@ -100,9 +96,7 @@ export class GalleryItemsController {
 
   @Get('favorites')
   @UseGuards(new AuthGuard())
-  async findAllFavorites(
-    @CurrentUser() user: User,
-  ) {
+  async findAllFavorites(@CurrentUser() user: User) {
     return await this.galleryItemsService.findAllFavorites(user);
   }
 

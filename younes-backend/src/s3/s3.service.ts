@@ -21,10 +21,6 @@ export class S3Service {
       Body: file.buffer,
       Bucket: this.configService.get<string>('AWS_S3_BUCKET_NAME'),
       Key: urlKey,
-      ContentLength: file.size,
-      ContentType: file.mimetype,
-      //ContentDisposition: `attachment; filename="${file.originalname}"`,
-      ACL: 'public-read',
     };
 
     const data: S3.ManagedUpload.SendData = await this.s3
