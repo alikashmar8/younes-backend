@@ -42,7 +42,7 @@ export class GalleryItemsService {
   async createFile(
     data: CreateGalleryFileDto,
     currentUser: User,
-    file: Express.Multer.File
+    file: Express.Multer.File,
   ): Promise<GalleryItem> {
     let item = await this.galleryItemRepository
       .save({
@@ -158,13 +158,25 @@ export class GalleryItemsService {
   }
 
   async remove(id: string, currentUser: User) {
-    const item = await this.findOne(id, currentUser);
-    if (item.type === GalleryItemType.FILE)
-      await this.s3Service.s3FileDelete(item.image);
-    return await this.galleryItemRepository.delete(id).catch((err) => {
-      console.log(err);
-      throw new BadRequestException('Error deleting item');
-    });
+    const item: GalleryItem = await this.findOne(id, currentUser);
+    const itemImage = item.image;
+
+    return await this.galleryItemRepository
+      .delete(id)
+      .then(async (res) => {
+        if (itemImage) {
+          try {
+            await this.s3Service.s3FileDelete(itemImage);
+          } catch (err) {
+            console.log(err);
+          }
+        }
+        return res;
+      })
+      .catch((err) => {
+        console.log(err);
+        throw new BadRequestException('Error deleting item');
+      });
   }
 
   async sell(id: string, quantity: any, user: User) {

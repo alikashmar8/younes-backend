@@ -1,11 +1,15 @@
 import {
   Body,
   Controller,
-  Delete, ForbiddenException, Get,
+  Delete,
+  ForbiddenException,
+  Get,
   Param,
   Patch,
   Post,
-  UploadedFile, UseGuards, UseInterceptors
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
@@ -29,44 +33,13 @@ export class BusinessesController {
   @Post()
   @UseGuards(new SuperAdminGuard())
   @ApiConsumes('multipart/form-data')
-  @UseInterceptors(
-    FileInterceptor('logo', {
-      preservePath: true,
-      storage: diskStorage({
-        destination: BUSINESS_LOGO_PATH,
-        filename: (req, file, cb) => {
-          const randomName = Array(32)
-            .fill(null)
-            .map(() => Math.round(Math.random() * 16).toString(16))
-            .join('');
-          cb(null, `${basename(file.originalname)}-${randomName}${extname(file.originalname)}`);
-        },
-      }),
-      fileFilter: (req, file, cb: FileFilterCallback) => {
-        const acceptedExtensions = [
-          'image/jpg',
-          'image/jpeg',
-          'image/png',
-          'image/svg',
-        ];
-        if (!acceptedExtensions.includes(file.mimetype)) {
-          const error = new Error('Invalid file type');
-          return cb(null, false);
-        }
-        cb(null, true);
-      },
-
-      limits: {
-        fileSize: 1024 * 1024 * 5,
-      },
-    }),
-  )
+  @UseInterceptors(FileInterceptor('logo'))
   create(
     @Body() createBusinessDto: CreateBusinessDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
     if (file) {
-      createBusinessDto.logo = BUSINESS_LOGO_PATH + file.filename;
+      createBusinessDto.logo = file;
     } else {
       createBusinessDto.logo = null;
     }

@@ -35,8 +35,8 @@ import { S3Service } from './s3/s3.service';
       //   type: 'mysql',
       //   host: '52.213.53.168',
       //   port: 3306,
-      //   username: 'admin',
-      //   password: 'admin',
+      //   username: 'root',
+      //   password: 'root',
       //   database: 'younes_db',
       //   synchronize: true,
       //   logging: false,
@@ -49,7 +49,7 @@ import { S3Service } from './s3/s3.service';
         port: 3306,
         username: 'root',
         password: '',
-        database: 'younes_db',
+        database: 'youness_db',
         synchronize: true,
         logging: false,
         entities: ['dist/**/*.entity{.ts,.js}'],
@@ -58,6 +58,8 @@ import { S3Service } from './s3/s3.service';
     ),
     AwsSdkModule.forRoot({
       defaultServiceOptions: {
+        accessKeyId: process.env['AWS_ACCESS_KEY_ID'],
+        secretAccessKey: process.env['AWS_SECRET_ACCESS_KEY'],
         region: process.env['REGION'],
       },
       services: [S3],

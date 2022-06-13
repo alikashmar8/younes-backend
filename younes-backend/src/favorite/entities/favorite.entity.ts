@@ -27,7 +27,9 @@ export class Favorite {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @ManyToOne((type) => GalleryItem, (item) => item.favorites)
+  @ManyToOne((type) => GalleryItem, (item) => item.favorites, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'item_id' })
   item: GalleryItem;
 }

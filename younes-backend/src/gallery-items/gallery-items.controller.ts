@@ -45,39 +45,16 @@ export class GalleryItemsController {
   }
 
   @Post('files')
-  @UseInterceptors(
-    FileInterceptor('image'),
-    // FileInterceptor('image', {
-    //   preservePath: true,
-    //   storage: diskStorage({
-    //     destination: GALLERY_FILES_IMAGES_PATH,
-    //     filename: (req, file, cb) => {
-    //       console.log('using image file name');
-    //       const randomName = Array(32)
-    //         .fill(null)
-    //         .map(() => Math.round(Math.random() * 16).toString(16))
-    //         .join('');
-    //       cb(null, `${randomName}${extname(file.originalname)}`);
-    //     },
-    //   }),
-    //   limits: {
-    //     fileSize: 1024 * 1024 * 5,
-    //   },
-    // }),
-  )
+  @UseInterceptors(FileInterceptor('image'))
   @ApiConsumes('multipart/form-data')
   async createFiles(
     @Body() createGalleryItemDto: CreateGalleryFileDto,
     @CurrentUser() user: User,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    console.log('checking if file exists in controller');
-
     if (!file) {
-      console.log('file not received in controller');
       throw new BadRequestException('No image was uploaded');
     }
-    console.log('file found in if');
     return await this.galleryItemsService.createFile(
       createGalleryItemDto,
       user,

@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { S3Service } from 'src/s3/s3.service';
 import { Repository } from 'typeorm';
 import { CreateBusinessDto } from './dto/create-business.dto';
 import { UpdateBusinessDto } from './dto/update-business.dto';
@@ -10,10 +11,24 @@ export class BusinessesService {
   constructor(
     @InjectRepository(Business)
     private businessesRepository: Repository<Business>,
+    private s3Service: S3Service,
   ) {}
 
   async create(createBusinessDto: CreateBusinessDto) {
-    return await this.businessesRepository.save(createBusinessDto);
+    const business = await this.businessesRepository
+      .save({
+        name: createBusinessDto.name,
+      })
+      .then(async (business) => {
+        if (createBusinessDto.logo) {
+          const fileLocation: string = await this.s3Service.s3FileUpload(
+            createBusinessDto.logo,
+            `businesses_logos`,
+          );
+          createBusinessDto.logo = fileLocation;
+        }
+        return business;
+      });
   }
 
   async findAll() {
@@ -31,8 +46,15 @@ export class BusinessesService {
   }
 
   async remove(id: string) {
-    return await this.businessesRepository.delete(id).catch(() => {
-      throw new BadRequestException('Cannot delete business');
-    });
+    const business = await this.findOne(id);
+    let logo = business.logo;
+    return await this.businessesRepository
+      .delete(id)
+      .then(async () => {
+        if (logo) await this.s3Service.s3FileDelete(logo);
+      })
+      .catch(() => {
+        throw new BadRequestException('Cannot delete business');
+      });
   }
 }
