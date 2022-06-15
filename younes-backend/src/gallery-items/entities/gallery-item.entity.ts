@@ -53,6 +53,7 @@ export class GalleryItem {
 
   @Column({
     type: 'double',
+    default: 0,
   })
   price?: number;
 

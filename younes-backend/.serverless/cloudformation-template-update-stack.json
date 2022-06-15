@@ -161,7 +161,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/younes-backend/prod/1655152734811-2022-06-13T20:38:54.811Z/younes-backend.zip"
+          "S3Key": "serverless/younes-backend/prod/1655321591849-2022-06-15T19:33:11.849Z/younes-backend.zip"
         },
         "Handler": "dist/serverless.handler",
         "Runtime": "nodejs14.x",
@@ -179,14 +179,14 @@
         "MainLogGroup"
       ]
     },
-    "MainLambdaVersionNkXSC6bYGu4oi5zIKk3NXmOdaVcSHS6y7quomYspxAU": {
+    "MainLambdaVersionzyiTAtsbw9stQ8cQY5d3HsAdlZxjct2sRV5ZibKbULM": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "MainLambdaFunction"
         },
-        "CodeSha256": "ycdNKWO8GmOLY2ABP8N06gV8pNkFVjR2bceRhgpce9w="
+        "CodeSha256": "c5iF5KepuVP7yvydwDY4tTbCKa2W5xt9WsfFC3fbung="
       }
     },
     "ApiGatewayRestApi": {
@@ -311,7 +311,7 @@
         "MainLambdaPermissionApiGateway"
       ]
     },
-    "ApiGatewayDeployment1655152664522": {
+    "ApiGatewayDeployment1655321517780": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -374,7 +374,7 @@
     "MainLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "MainLambdaVersionNkXSC6bYGu4oi5zIKk3NXmOdaVcSHS6y7quomYspxAU"
+        "Ref": "MainLambdaVersionzyiTAtsbw9stQ8cQY5d3HsAdlZxjct2sRV5ZibKbULM"
       },
       "Export": {
         "Name": "sls-younes-backend-prod-MainLambdaFunctionQualifiedArn"
