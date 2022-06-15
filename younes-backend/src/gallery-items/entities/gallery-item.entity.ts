@@ -46,7 +46,9 @@ export class GalleryItem {
   })
   is_active?: boolean;
 
-  @Column({})
+  @Column({
+    default: 1,
+  })
   quantity?: number;
 
   @Column({
